@@ -1058,7 +1058,7 @@ def render_claim_input() -> bool:
     st.markdown('<div class="fc-chip-row">', unsafe_allow_html=True)
     chip_cols = st.columns([.7, 1.25, 2.8, 2.5])
     chip_cols[0].markdown(
-        '<div class="fc-label" style="padding-top:14px;">Exemples :</div>',
+        '<div class="fc-label" style="padding-top:14px;">Exemples:</div>',
         unsafe_allow_html=True,
     )
     for index, claim in enumerate(EXAMPLE_CLAIMS, start=1):
