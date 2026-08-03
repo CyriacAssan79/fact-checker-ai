@@ -65,10 +65,10 @@ conda activate fact-checker
 pip install -r requirements.txt
 ```
 
-In this audit session, `conda run -n fact-checker` returned
-`EnvironmentLocationNotFound`; the only visible Conda environment was `app`, and
-it did not contain PyTorch. The global Python had most ML packages but not
-FAISS, so heavy FAISS execution could not be completed from this session.
+The project was validated from a dedicated `fact-checker` Conda environment
+under WSL. The first model downloads may show a Hugging Face Hub warning when
+`HF_TOKEN` is not configured; the pipeline still runs, but authenticated access
+can improve rate limits and download speed.
 
 ## Execution
 
@@ -124,12 +124,29 @@ score and NLI details.
 
 ## Evaluation
 
-Prototype results supplied for the current subset:
+Latest end-to-end evaluation run:
 
-- Accuracy: 62%
-- Evidence Recall: 56%
-- MRR: 0.52
-- FEVER Score: 38%
+```powershell
+python evaluation/evaluate_pipeline.py
+```
+
+Run context:
+
+- FEVER development examples loaded: 19,998.
+- Distinct indexed documents found in `data/indexes/chunks.db`: 96,406.
+- Target evaluation cap: 50 evaluable examples.
+- Actually evaluated examples: 24.
+- Skipped examples: 19,974.
+
+Results:
+
+- Correct labels: 18 / 24.
+- Accuracy: 75.00%.
+- Evidence Recall: 54.17%.
+- Evidence Precision: 3.34%.
+- FEVER Score: 41.67%.
+- Macro F1: 0.5211.
+- ECE: 0.1333.
 
 The FEVER Score implemented for this project counts an example only when the
 predicted label is correct and at least one gold evidence sentence is retrieved.
@@ -141,7 +158,7 @@ Observed local artifacts:
 
 - Wikipedia files: 109 JSONL files.
 - Processed chunks: 747,028 chunks.
-- Distinct indexed documents: 493,500.
+- Distinct indexed documents in the current chunks database: 96,406.
 - SQLite database: `data/indexes/chunks.db`.
 - FAISS index: `data/indexes/faiss.index`.
 - Embeddings: 1,460 NumPy batches, dimension 384.
@@ -155,8 +172,9 @@ Observed local artifacts:
 - `indexing/preprocess_wikipedia.py` currently has `MAX_FILES = 2`; this should
   be changed intentionally before rebuilding from raw Wikipedia if a full corpus
   is required.
-- Prototype metrics are reported on a subset and should not be presented as
-  final benchmark numbers.
+- Evaluation metrics are reported on the currently indexed subset only. In the
+  latest run, only 24 FEVER development examples were evaluable because most
+  gold evidence was outside the indexed corpus.
 - Retrieval quality depends on chunking, dense embedding quality and corpus
   coverage.
 - NLI confidence is not fully calibrated; ECE is available to track this.

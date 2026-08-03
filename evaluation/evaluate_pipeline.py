@@ -1,5 +1,11 @@
 import json
+import sys
 from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 from config.setting import CHUNKS_DATABASE_FILE
 from retrieval.document_retriever import DocumentRetriever, load_database
@@ -12,8 +18,6 @@ from evaluation.metrics import evidence_precision, expected_calibration_error, m
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-
-BASE_DIR = Path(__file__).resolve().parents[1]
 
 DEV_FILE = (
     BASE_DIR
