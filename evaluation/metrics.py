@@ -54,6 +54,36 @@ def evidence_precision(
     return correct_count / retrieved_count
 
 
+def macro_f1_score(gold_labels: Iterable[str], predicted_labels: Iterable[str]) -> float:
+    gold = list(gold_labels)
+    predicted = list(predicted_labels)
+    if len(gold) != len(predicted):
+        raise ValueError("gold_labels and predicted_labels must have the same length.")
+    if not gold:
+        return 0.0
+
+    f1_scores = []
+    for label in FEVER_LABELS:
+        true_positives = sum(1 for g, p in zip(gold, predicted) if g == label and p == label)
+        false_positives = sum(1 for g, p in zip(gold, predicted) if g != label and p == label)
+        false_negatives = sum(1 for g, p in zip(gold, predicted) if g == label and p != label)
+
+        precision = (
+            true_positives / (true_positives + false_positives)
+            if (true_positives + false_positives) > 0
+            else 0.0
+        )
+        recall = (
+            true_positives / (true_positives + false_negatives)
+            if (true_positives + false_negatives) > 0
+            else 0.0
+        )
+        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+        f1_scores.append(f1)
+
+    return sum(f1_scores) / len(f1_scores)
+
+
 def mean_reciprocal_rank(ranks: Iterable[int | None]) -> float:
     values = [0.0 if rank is None or rank <= 0 else 1 / rank for rank in ranks]
     if not values:

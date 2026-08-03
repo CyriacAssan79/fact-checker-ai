@@ -6,6 +6,7 @@ from evaluation.metrics import (
     evidence_recall,
     expected_calibration_error,
     fever_score,
+    macro_f1_score,
     mean_reciprocal_rank,
 )
 
@@ -29,6 +30,7 @@ class MetricsTest(unittest.TestCase):
         self.assertAlmostEqual(evidence_recall(retrieved, evidence), 0.5)
         self.assertAlmostEqual(evidence_precision(retrieved, evidence), 0.5)
         self.assertAlmostEqual(fever_score(gold, predicted, [True, False, False]), 1 / 3)
+        self.assertAlmostEqual(macro_f1_score(gold, predicted), 5 / 9)
 
     def test_rank_and_calibration_metrics(self):
         self.assertAlmostEqual(mean_reciprocal_rank([1, 2, None]), 0.5)

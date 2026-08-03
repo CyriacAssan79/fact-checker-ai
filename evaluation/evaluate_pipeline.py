@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
 
-from retrieval.document_retriever import DocumentRetriever
+from config.setting import CHUNKS_DATABASE_FILE
+from retrieval.document_retriever import DocumentRetriever, load_database
 from retrieval.passage_retriever import PassageRetriever
 from retrieval.reranker import Reranker
 from verification.verifier import Verifier
-from evaluation.metrics import expected_calibration_error
+from evaluation.metrics import evidence_precision, expected_calibration_error, macro_f1_score
 
 
 # =============================================================================
@@ -212,6 +213,10 @@ def evaluate_pipeline(
     detailed_results = []
     confidences = []
     correctness_values = []
+    gold_labels = []
+    predicted_labels = []
+    retrieved_evidence_sets = []
+    gold_evidence_sets = []
 
     # -------------------------------------------------------------------------
     # ÉVALUATION
@@ -310,6 +315,14 @@ def evaluate_pipeline(
                 0
             )
 
+        retrieved_evidence_set = {
+            (passage["doc_id"], sentence_id)
+            for passage in reranked_results
+            for sentence_id in passage["sentence_ids"]
+        }
+        retrieved_evidence_sets.append(retrieved_evidence_set)
+        gold_evidence_sets.append(gold_evidence)
+
         # ---------------------------------------------------------------------
         # VÉRIFICATION NLI
         # ---------------------------------------------------------------------
@@ -389,6 +402,8 @@ def evaluate_pipeline(
 
         confidences.append(float(verification_result["confidence"]))
         correctness_values.append(label_correct)
+        gold_labels.append(gold_label)
+        predicted_labels.append(predicted_label)
 
         # ---------------------------------------------------------------------
         # FEVER SCORE
@@ -462,6 +477,16 @@ def evaluate_pipeline(
         n_bins=10,
     )
 
+    macro_f1 = macro_f1_score(
+        gold_labels=gold_labels,
+        predicted_labels=predicted_labels,
+    )
+
+    precision_of_evidence = evidence_precision(
+        retrieved_evidence=retrieved_evidence_sets,
+        gold_evidence=gold_evidence_sets,
+    )
+
     return {
         "evaluated_examples": evaluated_examples,
         "skipped_examples": skipped_examples,
@@ -469,9 +494,11 @@ def evaluate_pipeline(
         "accuracy": accuracy,
         "claims_with_evidence": claims_with_evidence,
         "evidence_recall": evidence_recall,
+        "evidence_precision": precision_of_evidence,
         "mrr": mrr,
         "fever_score": fever_score,
         "ece": ece,
+        "macro_f1": macro_f1,
         "detailed_results": detailed_results
     }
 
@@ -496,7 +523,8 @@ if __name__ == "__main__":
     print(
     "Chargement des documents indexés...")
 
-    indexed_documents = load_indexed_documents(document_retriever.connection)
+    with load_database(CHUNKS_DATABASE_FILE) as connection:
+        indexed_documents = load_indexed_documents(connection)
 
     print(f"Documents indexés : {len(indexed_documents)}")
 
@@ -563,10 +591,10 @@ if __name__ == "__main__":
     print(f"Claims avec preuve :{results['claims_with_evidence']}")
 
     print(f"Evidence Recall : {results['evidence_recall']:.4f}")
-
-    print(f"MRR :{results['mrr']:.4f}")
+    print(f"Evidence Precision : {results['evidence_precision']:.4f}")
     print()
     print(f"FEVER Score : {results['fever_score']:.4f}")
+    print(f"Macro F1 : {results['macro_f1']:.4f}")
     print(f"ECE : {results['ece']:.4f}")
     print()
     print("=" * 100)
