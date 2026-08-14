@@ -27,8 +27,8 @@ DEFAULT_RERANK_TOP_K = 5
 DEFAULT_MAX_CHUNKS_PER_DOCUMENT = 3
 
 PROTOTYPE_METRICS = {
-    "accuracy": 0.62,
-    "evidence_recall": 0.56,
+    "accuracy": 0.75,
+    "evidence_recall": 0.54,
     "mrr": 0.52,
-    "fever_score": 0.38,
+    "fever_score": 0.41,
 }

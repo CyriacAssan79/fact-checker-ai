@@ -3,3 +3,6 @@ data/indexes/embeddings/
 data/processed/processed_chunks.jsonl
 data/indexes/faiss.index
 data/indexes/chunks.db
+__pycache__/
+*.py[cod]
+*$py.class
