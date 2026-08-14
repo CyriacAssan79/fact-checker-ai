@@ -1,4 +1,4 @@
-# 🔎 Fact-Checker AI
+# 🔎 Fact-Checker AI - — Evidence-Based Automatic Fact Verification
 
 > **Evidence-based automatic fact-checking system built with NLP, Information Retrieval and Natural Language Inference (NLI).**
 
@@ -68,15 +68,15 @@ The system follows a multi-stage verification pipeline:
 
 ## 🧩 Main Components
 
-| Component | Technology / Model | Role |
-|---|---|---|
-| Claim & passage embeddings | `sentence-transformers/all-MiniLM-L6-v2` | Semantic representation |
-| Dense retrieval | FAISS | Fast vector similarity search |
-| Metadata store | SQLite | Passage and document metadata |
-| Reranking | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Candidate relevance scoring |
-| Verification | `cross-encoder/nli-deberta-v3-base` | Natural Language Inference |
-| Interface | Streamlit | Interactive fact-checking application |
-| Evaluation | FEVER + custom metrics | Retrieval and verification evaluation |
+| Component                  | Technology / Model                       | Role                                  |
+| -------------------------- | ---------------------------------------- | ------------------------------------- |
+| Claim & passage embeddings | `sentence-transformers/all-MiniLM-L6-v2` | Semantic representation               |
+| Dense retrieval            | FAISS                                    | Fast vector similarity search         |
+| Metadata store             | SQLite                                   | Passage and document metadata         |
+| Reranking                  | `cross-encoder/ms-marco-MiniLM-L-6-v2`   | Candidate relevance scoring           |
+| Verification               | `cross-encoder/nli-deberta-v3-base`      | Natural Language Inference            |
+| Interface                  | Streamlit                                | Interactive fact-checking application |
+| Evaluation                 | FEVER + custom metrics                   | Retrieval and verification evaluation |
 
 ## 🎯 Project Objective
 
@@ -110,15 +110,15 @@ The system was evaluated using the FEVER development set and the currently index
 
 ### Results
 
-| Metric | Result |
-|---|---|
-| Correct labels | 18 / 24 |
-| Accuracy | 75.00% |
-| Evidence Recall | 54.17% |
-| Evidence Precision | 3.34% |
-| FEVER Score | 41.67% |
-| Macro F1 | 0.5211 |
-| Expected Calibration Error (ECE) | 0.1333 |
+| Metric                           | Result  |
+| -------------------------------- | ------- |
+| Correct labels                   | 18 / 24 |
+| Accuracy                         | 75.00%  |
+| Evidence Recall                  | 54.17%  |
+| Evidence Precision               | 3.34%   |
+| FEVER Score                      | 41.67%  |
+| Macro F1                         | 0.5211  |
+| Expected Calibration Error (ECE) | 0.1333  |
 
 ### ⚠️ Evaluation Scope
 
@@ -171,8 +171,6 @@ The system processes the claim through the complete retrieval and verification p
 ```powershell
 streamlit run frontend/app.py
 ```
-
-💡 Screenshots of the Streamlit interface can be added here to provide a visual demonstration of the project.
 
 ## 📁 Project Structure
 
@@ -337,7 +335,7 @@ This project is an experimental prototype and currently has several limitations:
 Potential improvements include:
 
 - [ ] Build and evaluate against a larger, explicitly documented Wikipedia/FEVER corpus
-- [ ] Improve hybrid sparse + dense retrieval with BM25 and semantic search
+- [ ] Further improve the existing hybrid sparse + dense retrieval pipeline
 - [ ] Tune chunk size and overlap to improve evidence recall
 - [ ] Add stronger claim-aware reranking
 - [ ] Improve evidence aggregation and sentence selection
